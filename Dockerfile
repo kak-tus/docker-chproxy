@@ -1,11 +1,14 @@
-FROM alpine:3.7 AS build
+FROM debian:9 AS build
 
 ENV \
   CHPROXY_VERSION=1.12.0 \
   CHPROXY_SHA256=2671744cb6058fd9c8dd2b050dda29d85e8d5a5b25fc34cf9a6a54cf4917efde
 
 RUN \
-  apk add --no-cache \
+  apt-get update \
+  \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+    ca-certificates \
     curl \
   \
   && cd /usr/local/bin \
@@ -14,11 +17,13 @@ RUN \
   && tar -xvzf "chproxy-linux-amd64-$CHPROXY_VERSION.tar.gz" \
   && chmod +x chproxy-linux-amd64
 
-FROM alpine:3.7
+FROM debian:9
 
 RUN \
-  apk add --no-cache \
-    su-exec
+  apt-get update \
+  \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+    gosu
 
 ENV \
   USER_UID=1000 \
